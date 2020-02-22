@@ -1,11 +1,44 @@
+from __future__ import print_function
 import pygame
 from random import randint
 from random import choice
+from random import random
 import numpy as np
 def main():
-	rows, cols = (2, 2) 
-	arr = [[0 for i in range(rows)] for j in range(cols)]
+	rows, cols = (100, 100) 
+	arr = [[random() for i in range(rows)] for j in range(cols)]
+	for i in range(rows):
+		for j in range(cols):
+			if(arr[i][j] < .3):
+				arr[i][j] = 1
+			else:
+				arr[i][j] = 0
+	for i in range(cols):
+		arr[0][i] = 1
+		arr[rows - 1][i] = 1
+	for i in range(rows):
+		arr[i][0] = 1
+		arr[i][cols -1] = 1
 	#print(arr)
+	x = randint(1,rows-2)
+	y = randint(1,cols-2)
+	while(arr[x-1][y] != 0 or arr[x+1][y] != 0):
+		x = randint(1,rows-2)
+		y = randint(1,cols-2)
+	arr[x][y] = 2
+	wList = []
+	for i in range(rows):
+		wString = ""
+		for j in range(cols):
+			if(arr[i][j] == 1):
+				wString += "W"
+			elif(arr[i][j] == 2):
+				wString += "E"
+			else:
+				wString += " "
+		wList.append(wString)	
+	for i in wList:
+		print(i)
 	noLeft = [0,5,9,10,11,12,14]
 	allLeft = [1,2,3,4,6,7,8,13]
 	noRight = [0,3,7,8,11,12,13]
@@ -98,7 +131,10 @@ def main():
 	 		arr[i+1][j] = choice(below[arr[i][j]])
 	 		arr[i][j+1] = choice(right[arr[i][j]])
 	arr[rows-1][cols-1] = choice(below[arr[rows-2][cols-1]])
-	print(arr)
+	# for i in range(rows):
+	# 	for j in range(cols):
+	# 		print(arr[i][j], ' ', end='')
+	# 	print('\n')
 if __name__ == '__main__':
 	main()
 
