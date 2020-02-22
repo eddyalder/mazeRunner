@@ -2,7 +2,7 @@ import pygame
 pygame.init()
 
 screenWidth = 700
-screenHeight = 900
+screenHeight = 500
 
 win = pygame.display.set_mode((screenWidth,screenHeight))
 white = (255,255,255)
@@ -15,7 +15,6 @@ run = True
 
 while run:
     for event in pygame.event.get():
-            if event.type==QUIT:
-                pygame.quit()
-                sys.exit()
+        if event.type == pygame.QUIT:
+            run = False
     pygame.display.update()    
