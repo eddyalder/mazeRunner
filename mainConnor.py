@@ -9,10 +9,11 @@ def main():
 	arr = [[random() for i in range(rows)] for j in range(cols)]
 	for i in range(rows):
 		for j in range(cols):
-			if(arr[i][j] < .3):
+			if(arr[i][j] < .2):
 				arr[i][j] = 1
 			else:
 				arr[i][j] = 0
+
 	for i in range(cols):
 		arr[0][i] = 1
 		arr[rows - 1][i] = 1
@@ -20,6 +21,34 @@ def main():
 		arr[i][0] = 1
 		arr[i][cols -1] = 1
 	#print(arr)
+
+	for i in range(1,rows-1):
+		for j in range(1,cols-1):
+			if(arr[i][j]):
+				if(arr[i+1][j] != 1 and arr[i-1][j] != 1 and arr[i][j+1] != 1 and arr[i][j-1] != 1):
+					x = randint(0,1)
+					if(arr[i-1][j-1]):
+						if(x):
+							arr[i-1][j] = 1
+						else:
+							arr[i][j-1] = 1
+					elif(arr[i-1][j+1]):
+						if(x):
+							arr[i-1][j] = 1
+						else:
+							arr[i][j+1] = 1
+					elif(arr[i+1][j-1]):
+						if(x):
+							arr[i+1][j] = 1
+						else:
+							arr[i][j-1] = 1
+					elif(arr[i+1][j+1]):
+						if(x):
+							arr[i+1][j] = 1
+						else:
+							arr[i][j+1] = 1
+
+
 	x = randint(1,rows-2)
 	y = randint(1,cols-2)
 	while(arr[x-1][y] != 0 or arr[x+1][y] != 0):
@@ -31,7 +60,7 @@ def main():
 		wString = ""
 		for j in range(cols):
 			if(arr[i][j] == 1):
-				wString += "W"
+				wString += "."
 			elif(arr[i][j] == 2):
 				wString += "E"
 			else:
