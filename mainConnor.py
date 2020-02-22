@@ -83,6 +83,15 @@ def main():
 		13: noUp,
 		14: noUp
 	}
+
+	shape0 = [" | ",
+			  " | ",
+			  " | "]
+	shape1 = ["   ",
+			  "---",
+			  "   "]
+	shape2 = 
+
 	arr[0][0] = randint(0,14)
 	for i in range(rows-1):
 	 	for j in range(cols-1):
