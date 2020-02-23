@@ -388,6 +388,7 @@ while run:
     pressed = pygame.key.get_pressed()
     if (pressed[pygame.K_UP] or pressed[pygame.K_w]):
         circle.move(0, -1 * circle.velocity)
+        enemyMovement(i)
 
         for wall in walls:
             if (circle.rect.colliderect(wall.rect)):
