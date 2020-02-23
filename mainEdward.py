@@ -4,6 +4,7 @@ import math
 from random import *
 pygame.init()
 
+
 #Colors
 white = (255,255,255)
 red = (255,0,0)
@@ -21,10 +22,16 @@ startingX = 104
 startingY = 104
 
 #Difficulty
+difficultyChoice = 1
 difficultySpeed = 1
-timeRemaining = 256 / difficultySpeed
 deathCounter = 0
 
+fileOpen = open("test.txt", "r")
+if fileOpen.mode == 'r':
+    difficultyChoice = int(fileOpen.read())
+
+difficultySpeed = difficultyChoice * 4
+timeRemaining = math.floor(256 / difficultySpeed)
 #Global arr
 level = []
 walls = []
@@ -72,7 +79,7 @@ class Enemy(object):
         self.y = y
         self.color = brown
         self.radius = radius
-        self.velocity = 5
+        self.velocity = 4 + difficultyChoice
         self.rect = pygame.Rect(x + radius, y + radius, 5, 5)
 
     def draw(self, win):
@@ -254,7 +261,7 @@ def loadMap():
     y = randint(1, cols-2)
 
     l = 6
-    for k in range(3):
+    for k in range(difficultyChoice):
         while(arr[x][y] != 0):
             x = randint(1, rows-2)
             y = randint(1, cols-2)
@@ -305,10 +312,21 @@ def loadMap():
             x += 16
         y += 16
         x = 0
-    return end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1, enemy2, enemy3
+
+    if (difficultyChoice == 1):
+        return end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1
+    elif (difficultyChoice == 2):
+        return end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1, enemy2
+    elif (difficultyChoice == 3):
+        return end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1, enemy2, enemy3
     
 
-end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1, enemy2, enemy3 = loadMap()
+if (difficultyChoice == 1):
+    end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1 = loadMap()
+elif (difficultyChoice == 2):
+    end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1, enemy2 = loadMap()
+elif (difficultyChoice == 3):
+    end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1, enemy2, enemy3 = loadMap()
 
 clock = pygame.time.Clock()
 
@@ -320,9 +338,15 @@ def redrawGameWindow():
     pygame.draw.rect(win, blue, start_rect)
     pygame.draw.rect(win, gold, portalEntrace_rect)
     pygame.draw.rect(win, silver, portalExit_rect)
-    enemy1.draw(win)
-    enemy2.draw(win)
-    enemy3.draw(win)
+    if (difficultyChoice == 1):
+        enemy1.draw(win)
+    if (difficultyChoice == 2):
+        enemy1.draw(win)
+        enemy2.draw(win)
+    if (difficultyChoice == 3):
+        enemy1.draw(win)
+        enemy2.draw(win)
+        enemy3.draw(win)
     circle.draw(win)
     pygame.display.update()
 
@@ -338,7 +362,7 @@ sprintMult = 3
 run = True
 t0 = pygame.time.get_ticks()
 while run:
-    clock.tick(240)
+    clock.tick(144)
     tfinal = (pygame.time.get_ticks() - t0) / 1000
     pygame.display.set_caption("The Maze: Death Counter: " + str(deathCounter) + " | Difficulty Time - " + str(timeRemaining) + " | Your Time - " + str(tfinal))
 
@@ -354,50 +378,79 @@ while run:
     pressed = pygame.key.get_pressed()
     if (pressed[pygame.K_UP] or pressed[pygame.K_w]) and circle.y > circle.radius: 
         circle.move(0, -1 * circle.velocity)
-        enemy1.move(i)
-        enemy2.move(i)
-        enemy3.move(i)
+        if (difficultyChoice == 1):
+            enemy1.move(i)
+        elif (difficultyChoice == 2):
+            enemy1.move(i)
+            enemy2.move(i)
+        elif (difficultyChoice == 3):
+            enemy1.move(i)
+            enemy2.move(i)
+            enemy3.move(i)
         for wall in walls:
             if (circle.rect.colliderect(wall.rect)):
                 restart()
                 #raise SystemExit("You lose!")
-                # circle.rect.top = wall.rect.bottom
-                # circle.y = wall.rect.bottom + circle.radius
+                #circle.rect.top = wall.rect.bottom
+                #circle.y = wall.rect.bottom + circle.radius
     if (pressed[pygame.K_DOWN] or pressed[pygame.K_s]) and circle.y < screenHeight - circle.radius: 
         circle.move(0, circle.velocity)
-        enemy1.move(i)
-        enemy2.move(i)
-        enemy3.move(i)
+        if (difficultyChoice == 1):
+            enemy1.move(i)
+        elif (difficultyChoice == 2):
+            enemy1.move(i)
+            enemy2.move(i)
+        elif (difficultyChoice == 3):
+            enemy1.move(i)
+            enemy2.move(i)
+            enemy3.move(i)
         for wall in walls:
             if (circle.rect.colliderect(wall.rect)):
                 restart()
                 #raise SystemExit("You lose!")
-                # circle.rect.bottom = wall.rect.top
-                # circle.y = wall.rect.top - circle.radius
+                #circle.rect.bottom = wall.rect.top
+                #circle.y = wall.rect.top - circle.radius
     if (pressed[pygame.K_LEFT] or pressed[pygame.K_a]) and circle.x > circle.radius: 
         circle.move(-1 * circle.velocity, 0)
-        enemy1.move(i)
-        enemy2.move(i)
-        enemy3.move(i)
+        if (difficultyChoice == 1):
+            enemy1.move(i)
+        elif (difficultyChoice == 2):
+            enemy1.move(i)
+            enemy2.move(i)
+        elif (difficultyChoice == 3):
+            enemy1.move(i)
+            enemy2.move(i)
+            enemy3.move(i)
         for wall in walls:
             if (circle.rect.colliderect(wall.rect)):
                 restart()
                 #raise SystemExit("You lose!")
-                # circle.rect.left = wall.rect.right
-                # circle.x = wall.rect.right + circle.radius
+                #circle.rect.left = wall.rect.right
+                #circle.x = wall.rect.right + circle.radius
     if (pressed[pygame.K_RIGHT] or pressed[pygame.K_d]) and circle.x < screenWidth - circle.radius: 
         circle.move(circle.velocity, 0)
-        enemy1.move(i)
-        enemy2.move(i)
-        enemy3.move(i)
+        if (difficultyChoice == 1):
+            enemy1.move(i)
+        elif (difficultyChoice == 2):
+            enemy1.move(i)
+            enemy2.move(i)
+        elif (difficultyChoice == 3):
+            enemy1.move(i)
+            enemy2.move(i)
+            enemy3.move(i)
         for wall in walls:
             if (circle.rect.colliderect(wall.rect)):
                 restart()
                 #raise SystemExit("You lose!")
-                # circle.rect.right = wall.rect.left
-                # circle.x = wall.rect.left - circle.radius
+                #circle.rect.right = wall.rect.left
+                #circle.x = wall.rect.left - circle.radius
     if (pressed[pygame.K_r]):
-        end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1, enemy2, enemy3 = loadMap()
+        if (difficultyChoice == 1):
+            end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1 = loadMap()
+        elif (difficultyChoice == 2):
+            end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1, enemy2 = loadMap()
+        elif (difficultyChoice == 3):
+            end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1, enemy2, enemy3 = loadMap()
         redrawGameWindow()
         t0 = pygame.time.get_ticks()
     if (pressed[pygame.K_LSHIFT]):
@@ -410,17 +463,24 @@ while run:
         print("You win!")
         run = False
     
-    if circle.rect.colliderect(enemy1.rect):
-        restart()
-    if circle.rect.colliderect(enemy2.rect):
-        restart()
-    if circle.rect.colliderect(enemy3.rect):
-        restart()
+    if (difficultyChoice == 1):
+        if circle.rect.colliderect(enemy1.rect):
+            restart()
+    if (difficultyChoice == 2):
+        if circle.rect.colliderect(enemy1.rect):
+            restart()
+        if circle.rect.colliderect(enemy2.rect):
+            restart()
+    if (difficultyChoice == 3):
+        if circle.rect.colliderect(enemy1.rect):
+            restart()
+        if circle.rect.colliderect(enemy2.rect):
+            restart()
+        if circle.rect.colliderect(enemy3.rect):
+            restart()
 
     if circle.rect.colliderect(portalEntrace_rect):
         teleport()
 
-    #print("real x", circle.x, "real y", circle.y)
-    #print("x", circle.rect.x, "y", circle.rect.y)
     redrawGameWindow()
 
