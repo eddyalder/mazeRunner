@@ -21,6 +21,44 @@ def main():
 		arr[i][0] = 1
 		arr[i][cols -1] = 1
 	#print(arr)
+	for i in range(1,rows-1):
+		for j in range(1,cols-1):
+			if(arr[i][j]):
+				if(arr[i+1][j] != 1 and arr[i-1][j] != 1 and arr[i][j+1] != 1 and arr[i][j-1] != 1 and arr[i-1][j-1] != 1 and arr[i-1][j+1] != 1 and arr[i+1][j-1] != 1 and arr[i+1][j+1] != 1):
+					if(arr[i-2][j-2]):
+						arr[i-1][j-1] = 1
+					elif(arr[i-1][j-2]):
+						arr[i-1][j-1] = 1
+					elif(arr[i-2][j-1]):
+						arr[i-1][j-1] = 1
+					elif(arr[i-2][j]):
+						arr[i-1][j] = 1
+					elif(arr[i][j-2]):
+						arr[i][j-1] = 1
+					elif(arr[i-2][j+1]):
+						arr[i-1][j] = 1
+					elif(arr[i+1][j-2]):
+						arr[i][j-1] = 1
+					elif(arr[i-2][j+2]):
+						arr[i-1][j+1] = 1
+					elif(arr[i+2][j-2]):
+						arr[i+1][j-1] = 1
+					elif(arr[i+2][j-1]):
+						arr[i+1][j-1] = 1
+					elif(arr[i-1][j+2]):
+						arr[i-1][j+1] = 1
+					elif(arr[i+2][j]):
+						arr[i+1][j] = 1
+					elif(arr[i][j+2]):
+						arr[i][j+1] = 1
+					elif(arr[i+1][j+2]):
+						arr[i+1][j+1] = 1
+					elif(arr[i+2][j+1]):
+						arr[i+1][j+1] = 1
+					elif(arr[i+2][j+2]):
+						arr[i+1][j+1] = 1
+
+
 
 	for i in range(1,rows-1):
 		for j in range(1,cols-1):
@@ -46,7 +84,8 @@ def main():
 						if(x):
 							arr[i+1][j] = 1
 						else:
-							arr[i][j+1] = 1
+							arr[i][j+1] = 1	
+
 
 
 	x = randint(1,rows-2)
