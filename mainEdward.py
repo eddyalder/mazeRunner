@@ -15,6 +15,7 @@ green = (0,255,0)
 blue = (0,0,255)
 brown = (210,105,30)
 
+print(red)
 #Screen setup
 screenWidth = 800
 screenHeight = 800
@@ -26,7 +27,7 @@ difficultyChoice = 1
 difficultySpeed = 1
 deathCounter = 0
 
-fileOpen = open("test.txt", "r")
+fileOpen = open("diffOut.txt", "r")
 if fileOpen.mode == 'r':
     difficultyChoice = int(fileOpen.read())
 

@@ -1,8 +1,11 @@
+#import mainEdward
+import pygame
 import tkinter as tk
 from tkinter import *
 import tkinter.font as font
 from tkinter import ttk
 
+red = (255,0,0)
 def main():
     root = Tk()
     app = Title_Screen(root)
@@ -15,7 +18,7 @@ class Title_Screen:
 
         self.titleFont = font.Font(size = 30)
 
-        self.image = PhotoImage(file = r'C:\Users\Brehn Heil\Documents\Hack CU 2020\maze.png')
+        self.image = PhotoImage(file = r'C:\Users\eddya\Documents\Code Workspace\mazeRunner\maze.png')
         self.background = Label(self.master, image = self.image)
         self.background.pack()
         self.title = Label(self.master, text = "Maze Runner", bg = '#3366cc')
@@ -38,6 +41,12 @@ class Title_Screen:
         self.master.mainloop()
 
 class difficulty_select:
+    def callGame(self):
+        import mainEdward
+        #call = 'C:\\Users\\eddya\\Documents\\Code Workspace\\mazeRunner\\mainEdward.py'
+        #exec(open(call).read())
+        #exec(r'C:\Users\eddya\Documents\Code Workspace\mazeRunner\mainEdward.py')
+
     def __init__(self, master):
         self.master = master
         self.master.title("Difficulty Selecter")
@@ -45,7 +54,7 @@ class difficulty_select:
 
         self.titleFont = font.Font(size = 30)
 
-        self.image = PhotoImage(file = r'C:\Users\Brehn Heil\Documents\Hack CU 2020\maze.png')
+        self.image = PhotoImage(file = r'C:\Users\eddya\Documents\Code Workspace\mazeRunner\maze.png')
         self.background = Label(self.master, image = self.image)
         self.background.pack()
         self.title = Label(self.master, text = "Select A Difficulty", bg = '#3366cc')
@@ -66,18 +75,21 @@ class difficulty_select:
         with open("diffOut.txt", "w") as outFile:
             outNum = "1"
             outFile.write(outNum)
+        self.callGame()
     
     def medium_select_system(self):
         self.master.destroy()
         with open("diffOut.txt", "w") as outFile:
             outNum = "2"
             outFile.write(outNum)
+        self.callGame()
 
     def hard_select_system(self):
         self.master.destroy()
         with open("diffOut.txt", "w") as outFile:
             outNum = "3"
             outFile.write(outNum)
+        self.callGame()
 
 if __name__=='__main__':
     root = Tk()
