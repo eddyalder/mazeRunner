@@ -1,6 +1,7 @@
 import pygame
 import time
 import math
+import os
 from random import *
 pygame.init()
 
@@ -16,6 +17,7 @@ blue = (0,0,255)
 brown = (210,105,30)
 
 #Screen setup
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,100)
 screenWidth = 800
 screenHeight = 800
 startingX = 104

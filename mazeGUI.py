@@ -20,7 +20,7 @@ class Title_Screen:
 
         self.titleFont = font.Font(size = 30)
 
-        self.image = PhotoImage(file = directory + r'\maze.png')
+        self.image = PhotoImage(file = directory + r'\img\maze.png')
         self.background = Label(self.master, image = self.image)
         self.background.pack()
         self.title = Label(self.master, text = "Maze Runner", bg = '#3366cc')
@@ -53,7 +53,7 @@ class difficulty_select:
 
         self.titleFont = font.Font(size = 30)
 
-        self.image = PhotoImage(file = directory + r'\maze.png')
+        self.image = PhotoImage(file = directory + r'\img\maze.png')
         self.background = Label(self.master, image = self.image)
         self.background.pack()
         self.title = Label(self.master, text = "Select A Difficulty", bg = '#3366cc')
