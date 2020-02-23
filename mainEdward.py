@@ -4,18 +4,24 @@ import math
 from random import *
 pygame.init()
 
-#colors
+#Colors
 white = (255,255,255)
 red = (255,0,0)
+gold = (255,215,0)
+silver = (155,20,20)
 black = (0,0,0)
 green = (0,255,0)
 blue = (0,0,255)
 
-#screen setup
+#Screen setup
 screenWidth = 800
 screenHeight = 800
-startingX = 105
-startingY = 105
+startingX = 104
+startingY = 104
+
+#Difficulty
+difficultySpeed = 1
+timeRemaining = 256 / difficultySpeed
 
 win = pygame.display.set_mode((screenWidth,screenHeight))
 win.fill(white)
@@ -34,7 +40,7 @@ class Player(object):
         self.y = y
         self.color = red
         self.radius = radius
-        self.velocity = 2
+        self.velocity = 1
         self.rect = pygame.Rect(x + radius, y + radius, 5, 5)
 
     def draw(self, win):
@@ -118,6 +124,20 @@ def loadMap():
         y = randint(1,cols-2)
     arr[x][y] = 2
     arr[6][6] = 3
+
+    x = randint(1, rows-2)
+    y = randint(1, cols-2)
+    while(arr[x][y] != 0):
+        x = randint(1, rows-2)
+        y = randint(1, cols-2)
+    arr[x][y] = 4
+
+    x = randint(1, rows-2)
+    y = randint(1, cols-2)
+    while(arr[x][y] != 0):
+        x = randint(1, rows-2)
+        y = randint(1, cols-2)
+    arr[x][y] = 5
     for i in range(rows):
         wString = ""
         for j in range(cols):
@@ -127,6 +147,10 @@ def loadMap():
                 wString += "E"
             elif(arr[i][j] == 3):
                 wString += "S"
+            elif(arr[i][j] == 4):
+                wString += "O"
+            elif(arr[i][j] == 5):
+                wString += "P"
             else:
                 wString += " "
         level.append(wString)
@@ -140,13 +164,17 @@ def loadMap():
                 end_rect = pygame.Rect(x, y, 16, 16)
             if col == "S":
                 start_rect = pygame.Rect(x, y, 16, 16)
+            if col == "O":
+                portalEntrace_rect = pygame.Rect(x, y, 16, 16)
+            if col == "P":
+                portalExit_rect = pygame.Rect(x, y, 16, 16)
             x += 16
         y += 16
         x = 0
-    return end_rect, start_rect
+    return end_rect, start_rect, portalEntrace_rect, portalExit_rect
     
 
-end_rect, start_rect = loadMap()
+end_rect, start_rect, portalEntrace_rect, portalExit_rect = loadMap()
 
 clock = pygame.time.Clock()
 
@@ -156,18 +184,25 @@ def redrawGameWindow():
         pygame.draw.rect(win, black, wall.rect)
     pygame.draw.rect(win, green, end_rect)
     pygame.draw.rect(win, blue, start_rect)
+    pygame.draw.rect(win, gold, portalEntrace_rect)
+    pygame.draw.rect(win, silver, portalExit_rect)
     circle.draw(win)
     pygame.display.update()
 
+def teleport():
+    circle.x = portalExit_rect.x + 5
+    circle.y = portalExit_rect.y + 5
+    circle.rect.x = portalExit_rect.x + 5
+    circle.rect.y = portalExit_rect.y + 5
 
 run = True
 t0 = pygame.time.get_ticks()
 while run:
     clock.tick(60)
     tfinal = (pygame.time.get_ticks() - t0) / 1000
-    pygame.display.set_caption("The Maze - " + str(tfinal))
+    pygame.display.set_caption("The Maze: Difficulty Time - " + str(timeRemaining) + " | Your Time - " + str(tfinal))
 
-    i = math.floor(tfinal) * 16
+    i = math.floor(tfinal) * difficultySpeed
     if (255 - i < 0):
         raise SystemExit("You lose!")
     white = (255, 255 - i, 255 - i)
@@ -210,13 +245,17 @@ while run:
                 # circle.rect.right = wall.rect.left
                 # circle.x = wall.rect.left - circle.radius
     if (pressed[pygame.K_r]):
-        end_rect, start_rect = loadMap()
+        end_rect, start_rect, portalEntrace_rect, portalExit_rect = loadMap()
         redrawGameWindow()
         t0 = pygame.time.get_ticks()
 
     if circle.rect.colliderect(end_rect):
         print("You win!")
         run = False
+    
+    if circle.rect.colliderect(portalEntrace_rect):
+        teleport()
+
     #print("real x", circle.x, "real y", circle.y)
     #print("x", circle.rect.x, "y", circle.rect.y)
     redrawGameWindow()
