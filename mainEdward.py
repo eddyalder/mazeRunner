@@ -12,6 +12,7 @@ silver = (155,20,20)
 black = (0,0,0)
 green = (0,255,0)
 blue = (0,0,255)
+brown = (210,105,30)
 
 #Screen setup
 screenWidth = 800
@@ -22,6 +23,11 @@ startingY = 104
 #Difficulty
 difficultySpeed = 1
 timeRemaining = 256 / difficultySpeed
+deathCounter = 0
+
+#Global arr
+level = []
+walls = []
 
 win = pygame.display.set_mode((screenWidth,screenHeight))
 win.fill(white)
@@ -60,6 +66,71 @@ class Player(object):
         self.y += dy
 
 circle = Player(startingX,startingY,red,4)
+class Enemy(object):
+    def __init__(self,x,y,color,radius):
+        self.x = x
+        self.y = y
+        self.color = brown
+        self.radius = radius
+        self.velocity = 5
+        self.rect = pygame.Rect(x + radius, y + radius, 5, 5)
+
+    def draw(self, win):
+        pygame.draw.circle(win, self.color, (self.x,self.y), self.radius)
+        self.rect.left = self.x
+        self.rect.top = self.y
+
+    def move(self, colorChange):
+        choice = randint(0,1)
+        retColorUp = win.get_at((self.x, self.y - self.velocity))
+        retColorDown = win.get_at((self.x, self.y + self.velocity))
+        retColorLeft = win.get_at((self.x - self.velocity, self.y))
+        retColorRight = win.get_at((self.x + self.velocity, self.y))
+        if(circle.x < self.x):
+            if(circle.y < self.y):
+                if(choice):
+                    if (retColorUp == (255, 255 - colorChange, 255 - colorChange, 255)):
+                        self.y -= self.velocity
+                else:
+                    if (retColorLeft == (255, 255 - colorChange, 255 - colorChange, 255)):
+                        self.x -= self.velocity
+            else:
+                if(choice):
+                    if (retColorDown == (255, 255 - colorChange, 255 - colorChange, 255)):
+                        self.y += self.velocity
+                else:
+                    if (retColorLeft == (255, 255 - colorChange, 255 - colorChange, 255)):
+                        self.x -= self.velocity
+        else:
+            if(circle.y < self.y):
+                if(choice):
+                    if (retColorUp == (255, 255 - colorChange, 255 - colorChange, 255)):
+                        self.y -= self.velocity
+                else:
+                    if (retColorRight == (255, 255 - colorChange, 255 - colorChange, 255)):
+                        self.x += self.velocity
+            else:
+                if(choice):
+                    if (retColorDown == (255, 255 - colorChange, 255 - colorChange, 255)):
+                        self.y += self.velocity
+                else:
+                    if (retColorRight == (255, 255 - colorChange, 255 - colorChange, 255)):
+                        self.x += self.velocity
+
+        # if (choice == 1):
+        #     if (retColorUp == (255, 255 - colorChange, 255 - colorChange, 255)):
+        #         self.y -= self.velocity
+        # elif (choice == 2):
+        #     if (retColorDown == (255, 255 - colorChange, 255 - colorChange, 255)):
+        #         self.y += self.velocity
+        # elif (choice == 3):
+        #     if (retColorLeft == (255, 255 - colorChange, 255 - colorChange, 255)):
+        #         self.x -= self.velocity
+        # elif (choice == 4):
+        #     if (retColorRight == (255, 255 - colorChange, 255 - colorChange, 255)):
+        #         self.x += self.velocity
+
+
 
 def eraseMap():
     walls.clear()
@@ -67,17 +138,18 @@ def eraseMap():
     win.fill(white)
 
 def restart():
+    global deathCounter 
+    deathCounter += 1
     circle.x = startingX
     circle.y = startingY
     circle.rect.x = startingX
     circle.rect.y = startingY
 
-level = []
-walls = []
-
 def loadMap():
     eraseMap()
     restart()
+    global deathCounter
+    deathCounter = 0
     rows, cols = (50, 50) 
     arr = [[random() for i in range(rows)] for j in range(cols)]
     for i in range(rows):
@@ -92,6 +164,45 @@ def loadMap():
     for i in range(rows):
         arr[i][0] = 1
         arr[i][cols -1] = 1
+    
+    for i in range(1,rows-1):
+	    for j in range(1,cols-1):
+		    if(arr[i][j]):
+			    if(arr[i+1][j] != 1 and arr[i-1][j] != 1 and arr[i][j+1] != 1 and arr[i][j-1] != 1 and arr[i-1][j-1] != 1 and arr[i-1][j+1] != 1 and arr[i+1][j-1] != 1 and arr[i+1][j+1] != 1):
+				    if(arr[i-2][j-2]):
+				    	arr[i-1][j-1] = 1
+				    elif(arr[i-1][j-2]):
+				    	arr[i-1][j-1] = 1
+				    elif(arr[i-2][j-1]):
+				    	arr[i-1][j-1] = 1
+				    elif(arr[i-2][j]):
+				    	arr[i-1][j] = 1
+				    elif(arr[i][j-2]):
+				    	arr[i][j-1] = 1
+				    elif(arr[i-2][j+1]):
+				    	arr[i-1][j] = 1
+				    elif(arr[i+1][j-2]):
+				    	arr[i][j-1] = 1
+				    elif(arr[i-2][j+2]):
+				    	arr[i-1][j+1] = 1
+				    elif(arr[i+2][j-2]):
+				    	arr[i+1][j-1] = 1
+				    elif(arr[i+2][j-1]):
+				    	arr[i+1][j-1] = 1
+				    elif(arr[i-1][j+2]):
+				    	arr[i-1][j+1] = 1
+				    elif(arr[i+2][j]):
+				    	arr[i+1][j] = 1
+				    elif(arr[i][j+2]):
+				    	arr[i][j+1] = 1
+				    elif(arr[i+1][j+2]):
+				    	arr[i+1][j+1] = 1
+				    elif(arr[i+2][j+1]):
+				    	arr[i+1][j+1] = 1
+				    elif(arr[i+2][j+2]):
+				    	arr[i+1][j+1] = 1
+
+
     for i in range(1,rows-1):
             for j in range(1,cols-1):
                 if(arr[i][j]):
@@ -138,6 +249,17 @@ def loadMap():
         x = randint(1, rows-2)
         y = randint(1, cols-2)
     arr[x][y] = 5
+
+    x = randint(1, rows-2)
+    y = randint(1, cols-2)
+
+    l = 6
+    for k in range(3):
+        while(arr[x][y] != 0):
+            x = randint(1, rows-2)
+            y = randint(1, cols-2)
+        arr[x][y] = l
+        l = l + 1
     for i in range(rows):
         wString = ""
         for j in range(cols):
@@ -151,6 +273,12 @@ def loadMap():
                 wString += "O"
             elif(arr[i][j] == 5):
                 wString += "P"
+            elif(arr[i][j] == 6):
+                wString += "T"
+            elif(arr[i][j] == 7):
+                wString += "Y"
+            elif(arr[i][j] == 8):
+                wString += "U"
             else:
                 wString += " "
         level.append(wString)
@@ -168,13 +296,19 @@ def loadMap():
                 portalEntrace_rect = pygame.Rect(x, y, 16, 16)
             if col == "P":
                 portalExit_rect = pygame.Rect(x, y, 16, 16)
+            if col == "T":
+                enemy1 = Enemy(x + 8, y + 8, brown, circle.radius)
+            if col == "Y":
+                enemy2 = Enemy(x + 8, y + 8, brown, circle.radius)
+            if col == "U":
+                enemy3 = Enemy(x + 8, y + 8, brown, circle.radius)
             x += 16
         y += 16
         x = 0
-    return end_rect, start_rect, portalEntrace_rect, portalExit_rect
+    return end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1, enemy2, enemy3
     
 
-end_rect, start_rect, portalEntrace_rect, portalExit_rect = loadMap()
+end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1, enemy2, enemy3 = loadMap()
 
 clock = pygame.time.Clock()
 
@@ -186,6 +320,9 @@ def redrawGameWindow():
     pygame.draw.rect(win, blue, start_rect)
     pygame.draw.rect(win, gold, portalEntrace_rect)
     pygame.draw.rect(win, silver, portalExit_rect)
+    enemy1.draw(win)
+    enemy2.draw(win)
+    enemy3.draw(win)
     circle.draw(win)
     pygame.display.update()
 
@@ -195,12 +332,15 @@ def teleport():
     circle.rect.x = portalExit_rect.x + 5
     circle.rect.y = portalExit_rect.y + 5
 
+origVelocity = circle.velocity
+sprintMult = 3
+
 run = True
 t0 = pygame.time.get_ticks()
 while run:
-    clock.tick(60)
+    clock.tick(240)
     tfinal = (pygame.time.get_ticks() - t0) / 1000
-    pygame.display.set_caption("The Maze: Difficulty Time - " + str(timeRemaining) + " | Your Time - " + str(tfinal))
+    pygame.display.set_caption("The Maze: Death Counter: " + str(deathCounter) + " | Difficulty Time - " + str(timeRemaining) + " | Your Time - " + str(tfinal))
 
     i = math.floor(tfinal) * difficultySpeed
     if (255 - i < 0):
@@ -214,6 +354,9 @@ while run:
     pressed = pygame.key.get_pressed()
     if (pressed[pygame.K_UP] or pressed[pygame.K_w]) and circle.y > circle.radius: 
         circle.move(0, -1 * circle.velocity)
+        enemy1.move(i)
+        enemy2.move(i)
+        enemy3.move(i)
         for wall in walls:
             if (circle.rect.colliderect(wall.rect)):
                 restart()
@@ -222,6 +365,9 @@ while run:
                 # circle.y = wall.rect.bottom + circle.radius
     if (pressed[pygame.K_DOWN] or pressed[pygame.K_s]) and circle.y < screenHeight - circle.radius: 
         circle.move(0, circle.velocity)
+        enemy1.move(i)
+        enemy2.move(i)
+        enemy3.move(i)
         for wall in walls:
             if (circle.rect.colliderect(wall.rect)):
                 restart()
@@ -230,6 +376,9 @@ while run:
                 # circle.y = wall.rect.top - circle.radius
     if (pressed[pygame.K_LEFT] or pressed[pygame.K_a]) and circle.x > circle.radius: 
         circle.move(-1 * circle.velocity, 0)
+        enemy1.move(i)
+        enemy2.move(i)
+        enemy3.move(i)
         for wall in walls:
             if (circle.rect.colliderect(wall.rect)):
                 restart()
@@ -238,6 +387,9 @@ while run:
                 # circle.x = wall.rect.right + circle.radius
     if (pressed[pygame.K_RIGHT] or pressed[pygame.K_d]) and circle.x < screenWidth - circle.radius: 
         circle.move(circle.velocity, 0)
+        enemy1.move(i)
+        enemy2.move(i)
+        enemy3.move(i)
         for wall in walls:
             if (circle.rect.colliderect(wall.rect)):
                 restart()
@@ -245,14 +397,26 @@ while run:
                 # circle.rect.right = wall.rect.left
                 # circle.x = wall.rect.left - circle.radius
     if (pressed[pygame.K_r]):
-        end_rect, start_rect, portalEntrace_rect, portalExit_rect = loadMap()
+        end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1, enemy2, enemy3 = loadMap()
         redrawGameWindow()
         t0 = pygame.time.get_ticks()
+    if (pressed[pygame.K_LSHIFT]):
+        circle.velocity = origVelocity * sprintMult
+    
+    if (not pressed[pygame.K_LSHIFT]):
+        circle.velocity = origVelocity
 
     if circle.rect.colliderect(end_rect):
         print("You win!")
         run = False
     
+    if circle.rect.colliderect(enemy1.rect):
+        restart()
+    if circle.rect.colliderect(enemy2.rect):
+        restart()
+    if circle.rect.colliderect(enemy3.rect):
+        restart()
+
     if circle.rect.colliderect(portalEntrace_rect):
         teleport()
 
