@@ -22,25 +22,27 @@ screenWidth = 800
 screenHeight = 800
 startingX = 104
 startingY = 104
+win = pygame.display.set_mode((screenWidth,screenHeight))
+win.fill(white)
+pygame.display.set_caption("The Maze")
 
 #Difficulty
 difficultyChoice = 1
 difficultySpeed = 1
 deathCounter = 0
 
+#Reading the difficulty selected from file
 fileOpen = open("diffOut.txt", "r")
 if fileOpen.mode == 'r':
     difficultyChoice = int(fileOpen.read())
 
 difficultySpeed = difficultyChoice * 4
 timeRemaining = math.floor(256 / difficultySpeed)
+
 #Global arr
 level = []
 walls = []
-
-win = pygame.display.set_mode((screenWidth,screenHeight))
-win.fill(white)
-pygame.display.set_caption("The Maze")
+clock = pygame.time.Clock()
 
 class Wall(object):
     def __init__(self, pos):
@@ -49,7 +51,7 @@ class Wall(object):
         walls.append(self)
         self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
 
-class Player(object):
+class Player(object): 
     def __init__(self,x,y,color,radius):
         self.x = x
         self.y = y
@@ -126,27 +128,12 @@ class Enemy(object):
                     if (retColorRight == (255, 255 - colorChange, 255 - colorChange, 255)):
                         self.x += self.velocity
 
-        # if (choice == 1):
-        #     if (retColorUp == (255, 255 - colorChange, 255 - colorChange, 255)):
-        #         self.y -= self.velocity
-        # elif (choice == 2):
-        #     if (retColorDown == (255, 255 - colorChange, 255 - colorChange, 255)):
-        #         self.y += self.velocity
-        # elif (choice == 3):
-        #     if (retColorLeft == (255, 255 - colorChange, 255 - colorChange, 255)):
-        #         self.x -= self.velocity
-        # elif (choice == 4):
-        #     if (retColorRight == (255, 255 - colorChange, 255 - colorChange, 255)):
-        #         self.x += self.velocity
-
-
-
-def eraseMap():
+def eraseMap(): #Clear walls and level lists and fill the screen with white
     walls.clear()
     level.clear()
     win.fill(white)
 
-def restart():
+def restart(): #Send back to starting position and add one to death counter
     global deathCounter 
     deathCounter += 1
     circle.x = startingX
@@ -154,6 +141,7 @@ def restart():
     circle.rect.x = startingX
     circle.rect.y = startingY
 
+#Map generation algorithm
 def loadMap():
     eraseMap()
     restart()
@@ -211,7 +199,6 @@ def loadMap():
 				    elif(arr[i+2][j+2]):
 				    	arr[i+1][j+1] = 1
 
-
     for i in range(1,rows-1):
             for j in range(1,cols-1):
                 if(arr[i][j]):
@@ -237,12 +224,15 @@ def loadMap():
                                 arr[i+1][j] = 1
                             else:
                                 arr[i][j+1] = 1
+                            
     x = randint(1,rows-2)
     y = randint(1,cols-2)
     while(arr[x-1][y] != 0 or arr[x+1][y] != 0):
         x = randint(1,rows-2)
         y = randint(1,cols-2)
+    #Create exit position
     arr[x][y] = 2
+    #Creating starting position
     arr[6][6] = 3
 
     x = randint(1, rows-2)
@@ -250,6 +240,7 @@ def loadMap():
     while(arr[x][y] != 0):
         x = randint(1, rows-2)
         y = randint(1, cols-2)
+    #Portal Entrance
     arr[x][y] = 4
 
     x = randint(1, rows-2)
@@ -257,11 +248,13 @@ def loadMap():
     while(arr[x][y] != 0):
         x = randint(1, rows-2)
         y = randint(1, cols-2)
+    #Portal Exit
     arr[x][y] = 5
 
     x = randint(1, rows-2)
     y = randint(1, cols-2)
 
+    #Creating spots for however amount of enemies
     l = 6
     for k in range(difficultyChoice):
         while(arr[x][y] != 0):
@@ -272,21 +265,21 @@ def loadMap():
     for i in range(rows):
         wString = ""
         for j in range(cols):
-            if(arr[i][j] == 1):
+            if(arr[i][j] == 1): #Walls
                 wString += "W"
-            elif(arr[i][j] == 2):
+            elif(arr[i][j] == 2): #Exit position
                 wString += "E"
-            elif(arr[i][j] == 3):
+            elif(arr[i][j] == 3): #Starting position
                 wString += "S"
-            elif(arr[i][j] == 4):
+            elif(arr[i][j] == 4): #Portal Entrance
                 wString += "O"
-            elif(arr[i][j] == 5):
+            elif(arr[i][j] == 5): #Portal Exit
                 wString += "P"
-            elif(arr[i][j] == 6):
+            elif(arr[i][j] == 6): #Enemy 1
                 wString += "T"
-            elif(arr[i][j] == 7):
+            elif(arr[i][j] == 7): #Enemy 2
                 wString += "Y"
-            elif(arr[i][j] == 8):
+            elif(arr[i][j] == 8): #Enemy 3
                 wString += "U"
             else:
                 wString += " "
@@ -294,7 +287,7 @@ def loadMap():
 
     x = y = 0
     for row in level:
-        for col in row:
+        for col in row: #Generating rects/objects for all the game objects
             if col == "W":
                 Wall((x, y))
             if col == "E":
@@ -315,6 +308,7 @@ def loadMap():
         y += 16
         x = 0
 
+    #Different returns depending on choice of difficulty, look for way to clean this up and other spots in the program
     if (difficultyChoice == 1):
         return end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1
     elif (difficultyChoice == 2):
@@ -330,16 +324,17 @@ elif (difficultyChoice == 2):
 elif (difficultyChoice == 3):
     end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1, enemy2, enemy3 = loadMap()
 
-clock = pygame.time.Clock()
 
 def redrawGameWindow():
     win.fill(white)
+    #Draw all the game objects
     for wall in walls:
         pygame.draw.rect(win, black, wall.rect)
     pygame.draw.rect(win, green, end_rect)
     pygame.draw.rect(win, blue, start_rect)
     pygame.draw.rect(win, gold, portalEntrace_rect)
     pygame.draw.rect(win, silver, portalExit_rect)
+    #Depending on difficulty choice draw the corresponding amount of enemies
     if (difficultyChoice == 1):
         enemy1.draw(win)
     if (difficultyChoice == 2):
@@ -358,18 +353,31 @@ def teleport():
     circle.rect.x = portalExit_rect.x + 5
     circle.rect.y = portalExit_rect.y + 5
 
+def enemyMovement(colorChange): #Move the number of enemies that corresponds with the difficulty choice
+    if (difficultyChoice == 1):
+        enemy1.move(colorChange)
+    elif (difficultyChoice == 2):
+        enemy1.move(colorChange)
+        enemy2.move(colorChange)
+    elif (difficultyChoice == 3):
+        enemy1.move(colorChange)
+        enemy2.move(colorChange)
+        enemy3.move(colorChange)
+
 origVelocity = circle.velocity
 sprintMult = 3
 
 run = True
 t0 = pygame.time.get_ticks()
 while run:
+    #Set ticks to 5 for better view of map generation
     clock.tick(144)
     tfinal = (pygame.time.get_ticks() - t0) / 1000
     pygame.display.set_caption("The Maze: Death Counter: " + str(deathCounter) + " | Difficulty Time - " + str(timeRemaining) + " | Your Time - " + str(tfinal))
 
+    #Change increment of RGB subtraction depending on the difficulty
     i = math.floor(tfinal) * difficultySpeed
-    if (255 - i < 0):
+    if (255 < i):
         raise SystemExit("You lose!")
     white = (255, 255 - i, 255 - i)
 
@@ -378,74 +386,33 @@ while run:
             run = False
     
     pressed = pygame.key.get_pressed()
-    if (pressed[pygame.K_UP] or pressed[pygame.K_w]) and circle.y > circle.radius: 
+    if (pressed[pygame.K_UP] or pressed[pygame.K_w]):
         circle.move(0, -1 * circle.velocity)
-        if (difficultyChoice == 1):
-            enemy1.move(i)
-        elif (difficultyChoice == 2):
-            enemy1.move(i)
-            enemy2.move(i)
-        elif (difficultyChoice == 3):
-            enemy1.move(i)
-            enemy2.move(i)
-            enemy3.move(i)
+
         for wall in walls:
             if (circle.rect.colliderect(wall.rect)):
                 restart()
-                #raise SystemExit("You lose!")
-                #circle.rect.top = wall.rect.bottom
-                #circle.y = wall.rect.bottom + circle.radius
-    if (pressed[pygame.K_DOWN] or pressed[pygame.K_s]) and circle.y < screenHeight - circle.radius: 
+    if (pressed[pygame.K_DOWN] or pressed[pygame.K_s]): 
         circle.move(0, circle.velocity)
-        if (difficultyChoice == 1):
-            enemy1.move(i)
-        elif (difficultyChoice == 2):
-            enemy1.move(i)
-            enemy2.move(i)
-        elif (difficultyChoice == 3):
-            enemy1.move(i)
-            enemy2.move(i)
-            enemy3.move(i)
+        enemyMovement(i)
+
         for wall in walls:
             if (circle.rect.colliderect(wall.rect)):
                 restart()
-                #raise SystemExit("You lose!")
-                #circle.rect.bottom = wall.rect.top
-                #circle.y = wall.rect.top - circle.radius
-    if (pressed[pygame.K_LEFT] or pressed[pygame.K_a]) and circle.x > circle.radius: 
+    if (pressed[pygame.K_LEFT] or pressed[pygame.K_a]):
         circle.move(-1 * circle.velocity, 0)
-        if (difficultyChoice == 1):
-            enemy1.move(i)
-        elif (difficultyChoice == 2):
-            enemy1.move(i)
-            enemy2.move(i)
-        elif (difficultyChoice == 3):
-            enemy1.move(i)
-            enemy2.move(i)
-            enemy3.move(i)
+        enemyMovement(i)
+
         for wall in walls:
             if (circle.rect.colliderect(wall.rect)):
                 restart()
-                #raise SystemExit("You lose!")
-                #circle.rect.left = wall.rect.right
-                #circle.x = wall.rect.right + circle.radius
-    if (pressed[pygame.K_RIGHT] or pressed[pygame.K_d]) and circle.x < screenWidth - circle.radius: 
+    if (pressed[pygame.K_RIGHT] or pressed[pygame.K_d]):
         circle.move(circle.velocity, 0)
-        if (difficultyChoice == 1):
-            enemy1.move(i)
-        elif (difficultyChoice == 2):
-            enemy1.move(i)
-            enemy2.move(i)
-        elif (difficultyChoice == 3):
-            enemy1.move(i)
-            enemy2.move(i)
-            enemy3.move(i)
+        enemyMovement(i)
+
         for wall in walls:
             if (circle.rect.colliderect(wall.rect)):
                 restart()
-                #raise SystemExit("You lose!")
-                #circle.rect.right = wall.rect.left
-                #circle.x = wall.rect.left - circle.radius
     if (pressed[pygame.K_r]):
         if (difficultyChoice == 1):
             end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1 = loadMap()
@@ -455,16 +422,21 @@ while run:
             end_rect, start_rect, portalEntrace_rect, portalExit_rect, enemy1, enemy2, enemy3 = loadMap()
         redrawGameWindow()
         t0 = pygame.time.get_ticks()
+
+    #Sprint
     if (pressed[pygame.K_LSHIFT]):
         circle.velocity = origVelocity * sprintMult
     
+    #Reset vecocity after releasing shift
     if (not pressed[pygame.K_LSHIFT]):
         circle.velocity = origVelocity
 
+    #Check collision with the exit
     if circle.rect.colliderect(end_rect):
         print("You win!")
         run = False
     
+    #Check collision with the enemies depending on difficulty choice
     if (difficultyChoice == 1):
         if circle.rect.colliderect(enemy1.rect):
             restart()
@@ -481,6 +453,7 @@ while run:
         if circle.rect.colliderect(enemy3.rect):
             restart()
 
+    #Check collision with portal entrance
     if circle.rect.colliderect(portalEntrace_rect):
         teleport()
 
