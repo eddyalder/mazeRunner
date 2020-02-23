@@ -14,6 +14,8 @@ blue = (0,0,255)
 #screen setup
 screenWidth = 800
 screenHeight = 800
+startingX = 105
+startingY = 105
 
 win = pygame.display.set_mode((screenWidth,screenHeight))
 win.fill(white)
@@ -51,16 +53,25 @@ class Player(object):
         self.x += dx
         self.y += dy
 
+circle = Player(startingX,startingY,red,4)
+
 def eraseMap():
     walls.clear()
     level.clear()
     win.fill(white)
+
+def restart():
+    circle.x = startingX
+    circle.y = startingY
+    circle.rect.x = startingX
+    circle.rect.y = startingY
 
 level = []
 walls = []
 
 def loadMap():
     eraseMap()
+    restart()
     rows, cols = (50, 50) 
     arr = [[random() for i in range(rows)] for j in range(cols)]
     for i in range(rows):
@@ -138,9 +149,6 @@ def loadMap():
 end_rect, start_rect = loadMap()
 
 clock = pygame.time.Clock()
-startingX = 105
-startingY = 105
-circle = Player(startingX,startingY,red,4)
 
 def redrawGameWindow():
     win.fill(white)
@@ -151,11 +159,6 @@ def redrawGameWindow():
     circle.draw(win)
     pygame.display.update()
 
-def restart():
-    circle.x = startingX
-    circle.y = startingY
-    circle.rect.x = startingX
-    circle.rect.y = startingY
 
 run = True
 t0 = pygame.time.get_ticks()
@@ -164,7 +167,9 @@ while run:
     tfinal = (pygame.time.get_ticks() - t0) / 1000
     pygame.display.set_caption("The Maze - " + str(tfinal))
 
-    i = math.floor(tfinal) * 8
+    i = math.floor(tfinal) * 16
+    if (255 - i < 0):
+        raise SystemExit("You lose!")
     white = (255, 255 - i, 255 - i)
 
     for event in pygame.event.get():
