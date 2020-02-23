@@ -45,9 +45,6 @@ class Title_Screen:
 class difficulty_select:
     def callGame(self):
         import main
-        #call = 'C:\\Users\\eddya\\Documents\\Code Workspace\\mazeRunner\\mainEdward.py'
-        #exec(open(call).read())
-        #exec(r'C:\Users\eddya\Documents\Code Workspace\mazeRunner\mainEdward.py')
 
     def __init__(self, master):
         self.master = master
