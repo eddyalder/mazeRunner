@@ -1,11 +1,13 @@
 #import mainEdward
 import pygame
+import os
 import tkinter as tk
 from tkinter import *
 import tkinter.font as font
 from tkinter import ttk
 
-red = (255,0,0)
+directory = os.getcwd()
+print(directory)
 def main():
     root = Tk()
     app = Title_Screen(root)
@@ -13,12 +15,12 @@ def main():
 class Title_Screen:
     def __init__(self, master):
         self.master = master
-        self.master.title("Title Screen")
+        self.master.title("Maze Runner")
         self.master.geometry('1920x1080')
 
         self.titleFont = font.Font(size = 30)
 
-        self.image = PhotoImage(file = r'C:\Users\eddya\Documents\Code Workspace\mazeRunner\maze.png')
+        self.image = PhotoImage(file = directory + r'\maze.png')
         self.background = Label(self.master, image = self.image)
         self.background.pack()
         self.title = Label(self.master, text = "Maze Runner", bg = '#3366cc')
@@ -54,7 +56,7 @@ class difficulty_select:
 
         self.titleFont = font.Font(size = 30)
 
-        self.image = PhotoImage(file = r'C:\Users\eddya\Documents\Code Workspace\mazeRunner\maze.png')
+        self.image = PhotoImage(file = directory + r'\maze.png')
         self.background = Label(self.master, image = self.image)
         self.background.pack()
         self.title = Label(self.master, text = "Select A Difficulty", bg = '#3366cc')
