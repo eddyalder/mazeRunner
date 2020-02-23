@@ -15,7 +15,6 @@ green = (0,255,0)
 blue = (0,0,255)
 brown = (210,105,30)
 
-print(red)
 #Screen setup
 screenWidth = 800
 screenHeight = 800
