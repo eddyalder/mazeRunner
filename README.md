@@ -3,13 +3,6 @@ Game where you have to get through the maze under the time limit and avoid the e
 Created by:
     Edward Alder, Connor Horn, Brehn Heil
 
-    Pygame integration:
-        Edward Alder
-    GUI:
-        Brehn Heil
-    Maze Generation:
-        Connor Horn
-
 Features:
 Reach the green square to exit the maze.
 The background will turn progressively red as time is running out.
